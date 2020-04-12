@@ -20,8 +20,10 @@ package dev.mustafaakin;
 
 import org.apache.flink.api.common.accumulators.AverageAccumulator;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.contrib.streaming.state.RocksDBOptionsFactory;
 import org.apache.flink.contrib.streaming.state.RocksDBStateBackend;
 import org.apache.flink.runtime.state.StateBackend;
+import org.apache.flink.runtime.state.filesystem.FsStateBackend;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.DiscardingSink;
@@ -36,8 +38,8 @@ public class StreamingJob {
     public static void main(String[] args) throws Exception {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        StateBackend state = new RocksDBStateBackend("file:///tmp/file-state-backend");
-        env.setStateBackend(state);
+        RocksDBStateBackend state = new RocksDBStateBackend("file:///tmp/file-state-backend");
+        env.setStateBackend((StateBackend) state);
 
         DataStream<Tuple3<Integer, Double, Byte[]>> source = env.addSource(new FakeDataSource(10_000_000, 1, 1));
 
